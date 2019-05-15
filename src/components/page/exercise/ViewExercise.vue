@@ -1,339 +1,180 @@
 <template>
-    <div class="viewExercise">
-        <div class="params">
-            <input type="hidden" id="frase" value="<%=listaExer.getTextoArea()%>"/>
-
-            <input type="hidden" class="word" id="palavra<%=j%>" value="<%=keyWords.getFrase()%>"/>
+    <div>
+        <!-- <div>{{ paramsExercise }}</div> -->
+        <div v-html="exercise_processed.phrase"></div>
+        <br><br>
+        <!-- <div>{{paramsExercise}}</div> -->
+        <div class="words_area" v-html="exercise_processed.params"></div>
+        <!-- <div class="empty">
+        <div class="fill" draggable="true"></div>
         </div>
-            
-                <!--<img src="getImage?id=" width="200px" height="200px" style="align-content: center; margin-top: 100px;"/>-->
-            
-            <div class="params">
-                <input type="hidden" id="frase" value="<%=listaExer.getTextoArea()%>"/>
-
-                <input type="hidden" class="word" id="palavra<%=j%>" value="<%=keyWords.getFrase()%>"/>
-            </div>		
-            <div class="ui main segment text center aligned container" style="margin-top: 90px;">
-                <!--<div class="ui segment" id="content">-->
-                <div class="ui segment text center aligned" id="result"></div>
-                <div class="ui segment" id="ans"></div>
-
-                <div id="successMessage">
-                    <h2>You did it!</h2>
-                    <button onclick="init()">Play Again</button>
-                </div>
-                <!--</div>-->
-            </div>
-
-            <div class="ui basic modal">
-                <div class="ui icon header">
-                    <i class="archive icon"></i>
-                    Archive Old Messages
-                </div>
-                <div class="content">
-                    <p>Your inbox is getting full, would you like us to enable automatic archiving of old messages?</p>
-                </div>
-                <div class="actions">
-                    <div class="ui red basic cancel inverted button">
-                        <i class="remove icon"></i>
-                        No
-                    </div>
-                    <div class="ui green ok inverted button">
-                        <i class="checkmark icon"></i>
-                        Yes
-                    </div>
-                </div>
-            </div>
+        <div class="empty"></div>
+        <div class="empty"></div>
+        <div class="empty"></div>
+        <div class="empty"></div> -->
     </div>
+    
 </template>
 
 <script>
-import JQuery from 'jquery'
-import 'jquery-ui'
-import 'jquery-ui-dist/jquery-ui.min'
-import 'jquery-ui-dist/jquery-ui.css'
+// import JQuery from 'jquery'
+// import 'jquery-ui'
+// import 'jquery-ui-dist/jquery-ui.min'
+// import 'jquery-ui-dist/jquery-ui.css'
+
 
 import {baseApiUrl,showError} from '@/global'
 import axios from 'axios'
+// import { async } from 'q';
+// import { Script } from 'vm';
+// import { scrypt } from 'crypto';
 
 export default {
-    name: 'Viewxercise',
+    name: 'Viewexercise',
     data: function(){
         return{
             exercise: {},
-            paramsExercise: []
+            paramsExercise: [],
+            exercise_processed: {
+                'phrase': "",
+                'params': ""
+            }
+
         }
     },
     methods: {
         loadExercise(){
             const url = `${baseApiUrl}/exerciseComplete/${this.$route.params.id}`
-            axios.get(url).then(res => this.exercise = res.data).catch(showError)
+            axios.get(url).then(res => {
+                this.exercise = res.data;
+                let phrase_split = this.exercise.ds_texto.split("#");
+                let qt_params = this.exercise.ds_texto.split("#").length - 1;
+                let new_phrase = "";
+
+                [].map.call(phrase_split, function(obj, i){
+                    new_phrase += obj;
+                    new_phrase += i < qt_params ? "<div id='lacum_"+(i+1)+"' class='empty'></div>" : ""; 
+                })
+                 this.exercise_processed.phrase = new_phrase;
+                 
+                
+            }).catch(showError)
+            // .finally(() => this.construct_exercise())
         },
-        loadParansExercise(){
+        async loadParansExercise(){
             const url = `${baseApiUrl}/exerciseComplete/params/${this.$route.params.id}`
             axios.get(url).then(res => {
-                this.paramsExercise = res.data
-                }).catch(showError)
+                this.paramsExercise = res.data;
+                let paramsDOM = "";
+                 
+                [].map.call(this.paramsExercise, obj =>{
+                    let imageUrl = "data:image/jpeg;base64, "+obj.ds_img;
+                    paramsDOM += "<div><div id='word_"+obj.cd_parametro+"' class='fill' draggable='true'><img src='"+imageUrl+"'/></div><div>"+obj.nm_texto+"</div></div>"
+                });
+                this.exercise_processed.params = paramsDOM;
+            }).catch(showError)
+            .finally(() => this.construct_exercise())
+        },
+        construct_exercise(){
+            const filled = document.querySelectorAll('.fill');
+            const empties = document.querySelectorAll('.empty');
+            let word_hold;
+            
+            //loop throught empties and call drag events
+            for(const empty of empties){
+                empty.addEventListener('dragover', dragOver);
+                empty.addEventListener('dragenter', dragEnter);
+                empty.addEventListener('dragleave', dragLeave);
+                empty.addEventListener('drop', dragDrop);
+            }
+
+            // Fill  Listeners
+            for(const fill of filled){
+                fill.addEventListener('dragstart', dragStart);
+                fill.addEventListener('dragend', dragEnd);
+            }
+            
+
+            //dragFunction
+            function dragStart(){
+                word_hold = this.id;
+                this.className += ' hold';
+                setTimeout(() => (this.className = 'invisible'), 0) ;
+            }
+
+            function dragEnd(){
+                this.className = 'fill';
+                
+            }
+
+            function dragOver(e){
+                e.preventDefault();
+            }
+
+            function dragEnter(e){
+                e.preventDefault();
+                this.className += ' hovered';
+            }
+
+            function dragLeave(){
+                this.className = 'empty';
+            }
+
+            function dragDrop(){
+                this.className = 'empty';
+                if(this.id == "lacum_" + word_hold.split("_")[1])
+                    this.append(document.getElementById(word_hold));
+            }        
         }
     },
-    mounted(){
-        this.loadExercise()
-        this.loadParansExercise()
-
-        //JQuery --------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-        let $ = JQuery
-        $(init);
-        $(createExe);
-        $(textOberver);
-        $(test);
-        var correctCards = 0;
-
-        function test() {
-
-            $("#result").empty();
-            $("#ans").empty();
-
-            var exercisesLength = 1//$(".params").find(".word").length;
-
-            for (var j = 0; j < exercisesLength; j++) {
-                $("#result").append("<div class='exeUnit'></div>");
-                $("#result").find(".exeUnit").last().append("<div class='org'></div>")
-                var elemen = $(".params")[j];
-                var text = $(elemen).find("#frase").val().split(" ");
-                var getWordsCount = 0;
-                for (var i = 0; i < text.length; i++) {
-                    if (text[i] != "#") {
-                        $("#result").find(".exeUnit").last().find("div").last().append(text[i] + " ");
-                    } else {
-                        var getKeyWord = $(elemen).find(".word")[getWordsCount];
-                        // console.log(getWordsCount);
-                        $('<div class="wordSlot">  </div>').data('word', $(getKeyWord).val()).appendTo($("#result").find(".exeUnit").last()).droppable({
-                            accept: '#ans div',
-                            hoverClass: 'hovered',
-                            drop: handleCardDrop
-                        });
-
-                        $("#result").find(".exeUnit").last().append("<div class='org' ></div>");
-
-                        $("#ans").append(
-                                "<div class='wordContainer'>"
-                                + "<img src='getImage?id="+getWordsCount+"' alt='Image' height='80' width='80'>"
-                                + "</div>"
-                                );
-
-                        $('<div class="wordObject">' + $(getKeyWord).val() + '</div>').data('word', $(getKeyWord).val()).attr('id', 'card1').appendTo($("#ans").find(".wordContainer").last()).draggable({
-                            containment: '#content',
-                            stack: '#ans div',
-                            cursor: 'move',
-                            revert: true
-                        });
-
-                        getWordsCount++;
-                    }
-                }
-
-                $("#result").append("<hr>");
-            }
-
-            $("#result").find("hr").last().remove();
-
-
-
-        }
-
-
-        function init()
-        {
-
-
-
-            // Hide the success message
-            $('#successMessage').hide();
-            $('#successMessage').css(
-                            {
-                                left: '580px',
-                                top: '250px',
-                                width: 0,
-                                height: 0
-                            }
-                    );
-
-            // Reset the game
-            correctCards = 0;
-            $("#dvSource").html();
-            $("#dvDrop").html();
-
-
-            $("#dvSource img").draggable(
-                            {
-                                containment: '#content',
-                                stack: '#dvSource img',
-                                cursor: 'move',
-                                revert: true
-                            }
-                    )
-
-            $("#dvDrop div").droppable(
-                            {
-                                accept: '#dvSource img', //We use the accept option with the selector "#cardPile div" to ensure that the slot will only accept our number cards, and not any other draggable element.
-                                hoverClass: 'hovered', //The hoverClass option adds a CSS class to a droppable when a draggable is hovered over it � we use this option to add a class of 'hovered' to the element, which we'll highlight using CSS.
-                                drop: handleCardDrop
-                            }
-                    )
-
-
-
-
-
-
-            //create exercicio face
-            //$("#sub").click(function(){
-            function test() {
-
-                $("#result").empty();
-                $("#ans").empty();
-
-                var exercisesLength = 1//$(".params").find(".word").length;
-
-                for (var j = 0; j < exercisesLength; j++) {
-                    $("#result").append("<div class='exeUnit'></div>");
-                    $("#result").find(".exeUnit").last().append("<div class='org'></div>")
-                    var elemen = $(".param")[j];
-                    var text = $(elemen).find(".frase").val().split(" ");
-                    var getWordsCount = 0;
-                    for (var i = 0; i < text.length; i++) {
-                        if (text[i] != "#") {
-                            $("#result").find(".exeUnit").last().find("div").last().append(text[i] + " ");
-                        } else {
-                            var getKeyWord = $(elemen).find(".keyWord")[getWordsCount];
-                            $('<div class="wordSlot">  </div>').data('word', $(getKeyWord).find(".palavra").last().val()).appendTo($("#result").find(".exeUnit").last()).droppable({
-                                accept: '#ans div',
-                                hoverClass: 'hovered',
-                                drop: handleCardDrop
-                            });
-
-                            $("#result").find(".exeUnit").last().append("<div class='org' ></div>");
-
-                            $("#ans").append(
-                                    "<div class='wordContainer'>"
-                                    + "<img src='getImage?id="+i+"' alt='Image' height='80' width='80'>"
-                                    + "</div>"
-                                    );
-                            // console.log("POHA");
-
-                            $('<div class="wordObject">' + $(getKeyWord).find(".palavra").last().val() + '</div>').data('word', $(getKeyWord).find(".palavra").last().val()).attr('id', 'card1').appendTo($("#ans").find(".wordContainer").last()).draggable({
-                                containment: '#content',
-                                stack: '#ans div',
-                                cursor: 'move',
-                                revert: true
-                            });
-
-                            getWordsCount++;
-                        }
-                    }
-
-                    $("#result").append("<hr>");
-                }
-
-                $("#result").find("hr").last().remove();
-
-
-
-            }
-
-        }
-
-        //---------# funções #-------------
-
-        function createExe() {
-
-        }
-
-        function textOberver() {
-            $(".texto").on("change", function () {
-                var text = $(this).val().split(" ");
-                var hashLength = $(this).parent().find(".keyWord").length;
-                var hashCount = 0;
-
-                for (var i = 0; i < text.length; i++) {
-                    if (text[i] == "#") {
-                        hashCount++;
-                        if (hashCount > hashLength) {
-                            var fileIdGenerate = "ex" + ($(this).parent().attr("id").charAt(1)) + "wo" + hashCount;
-
-                            $(this).parent().append(
-                                    "<div class='keyWord'>"
-                                    + "<input type='file' id='" + fileIdGenerate + "'/>"
-                                    + "<label class='inputFile' for='" + fileIdGenerate + "'>+</label><br>"
-                                    + "<input type='text' name='palavra' class='palavra' placeholder='Palavra " + (hashCount) + "'/>&nbsp;"
-                                    + "</div>"
-                                    );
-                        }
-
-                    }
-                }
-
-                if (hashLength > hashCount) {
-                    for (var x = hashLength; x > hashCount; x--) {
-                        if ($(this).parent().find(".keyWord").length > 1) {
-                            $(this).parent().find(".keyWord").last().remove();
-                        }
-                    }
-                }
-            });
-        }
-
-        //validator drag and drop
-        function handleCardDrop(event, ui)
-        {
-            var slotNumber = $(this).data('word');
-            var cardNumber = ui.draggable.data('word');
-
-            //alert(bDrag)	  
-            if (cardNumber === slotNumber)
-            {
-                // console.log("ue");
-                //ui.draggable.addClass( 'correct' );
-                ui.draggable.draggable('disable');// this line decrease opacity and disable.
-                $(this).droppable('disable');
-                ui.draggable.position({of: $(this), my: 'left top', at: 'left top'});
-                ui.draggable.draggable('option', 'revert', false); // this line drop the element.
-                correctCards++;
-            }
-
-            // If all the cards have been placed correctly then display a message
-            // and reset the cards for another go
-            // console.log(correctCards);
-            if (correctCards === $(".word").length)
-            {
-                alert("Parabéns, você acertou!");
-                window.history.back();
-                ///$('.ui.basic.modal').modal('show');
-        //        $('#successMessage').show();
-        //        $('#successMessage').animate
-        //                (
-        //                        {
-        //                            left: '380px',
-        //                            top: '200px',
-        //                            width: '400px',
-        //                            height: '100px',
-        //                            opacity: 1
-        //                        }
-        //                );
-            }
-        }
-
-        $(document).ready(function () {
-
-            //test();
-            // console.log("batata");
-
-        });
+    mounted: function(){
+    this.loadExercise();
+    this.loadParansExercise();
     }
-
 }
 </script>
 
 <style>
+body{
+    background: darksalmon;
+}
+
+.fill{
+    /* background-image: url('http://source.unsplash.com/random/150x150'); */
+    position: relative;
+    height: 150px;
+    width: 150px;
+    top: 5px;
+    left: 5px;
+    cursor: pointer;
+}
+
+.empty{
+    display: inline-block;
+    height: 160px;
+    width: 160px;
+    margin: 10px;
+    border: 3px salmon solid;
+    background-color: white;
+}
+
+.hold {
+    border: solid #ccc 4px;
+}
+
+.hovered {
+    background: #f4f4f4;
+    border-style: dashed;
+}
+
+.invisible {
+    display: none;
+}
+
+.words_area{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
 
 </style>
