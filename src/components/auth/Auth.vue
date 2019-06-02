@@ -10,7 +10,7 @@
                     <b-form-input id = "user-login" type = "text" v-model="user.login" placeholder= "Digite o email ou CPF"></b-form-input>
                 </b-form-group>
                 <b-form-group>
-                    <b-form-input id = "user-password" type = "text" v-model="user.password" placeholder= "Digite a senha"></b-form-input>
+                    <b-form-input id = "user-password" type = "password" v-model="user.password" placeholder= "Digite a senha"></b-form-input>
                 </b-form-group>
             <b-button variant = "primary" @click="signin">Entrar</b-button>
             </b-form>
@@ -35,10 +35,10 @@
                         <b-form-input id = "user-cpf" type = "text" v-model="user.cd_cpf" placeholder="Informe o CPF"></b-form-input> 
                     </b-form-group>
                     <b-form-group>
-                        <b-form-input id = "user-password" type = "text" v-model="user.cd_senha" placeholder="Informe a Senha"></b-form-input>
+                        <b-form-input id = "user-password" type = "password" v-model="user.cd_senha" placeholder="Informe a Senha"></b-form-input>
                     </b-form-group>
                     <b-form-group>
-                        <b-form-input id = "user-confSenha" type = "text" v-model="user.cd_confSenha" placeholder="Confirme a Senha"></b-form-input>
+                        <b-form-input id = "user-confSenha" type = "password" v-model="user.cd_confSenha" placeholder="Confirme a Senha"></b-form-input>
                     </b-form-group>  
                     <b-form-group>
                         <select placeholder="Selecione o Tipo de Usuario" v-model="showSignup">

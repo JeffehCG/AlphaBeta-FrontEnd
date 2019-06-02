@@ -69,7 +69,8 @@ export default {
                  
                 [].map.call(this.paramsExercise, obj =>{
                     let imageUrl = "data:image/jpeg;base64, "+obj.ds_img;
-                    paramsDOM += "<div><div id='word_"+obj.cd_parametro+"' class='fill' draggable='true'><img src='"+imageUrl+"'/></div><div>"+obj.nm_texto+"</div></div>"
+                    // paramsDOM += "<div><div id='word_"+obj.cd_parametro+"' class='fill' draggable='true'><img src='"+imageUrl+"'/></div><div>"+obj.nm_texto+"</div></div>"
+                    paramsDOM += `<div class='words-container'><div><img src='${imageUrl}'/></div><div id='word_${obj.cd_parametro}' class='fill' draggable='true'>${obj.nm_texto}</div></div>`    
                 });
                 this.exercise_processed.params = paramsDOM;
             }).catch(showError)
@@ -78,7 +79,10 @@ export default {
         construct_exercise(){
             const filled = document.querySelectorAll('.fill');
             const empties = document.querySelectorAll('.empty');
+            const finalScore = document.querySelectorAll('.fill').length;
+            let score = 0;
             let word_hold;
+            const self = this; //instanciando o vue;
             
             //loop throught empties and call drag events
             for(const empty of empties){
@@ -122,9 +126,18 @@ export default {
 
             function dragDrop(){
                 this.className = 'empty';
-                if(this.id == "lacum_" + word_hold.split("_")[1])
+                if(this.id == "lacum_" + word_hold.split("_")[1]){
                     this.append(document.getElementById(word_hold));
-            }        
+                    score++;
+                    
+                    if(finalScore == score)
+                        self.exerciseDone();
+                }
+            }
+            
+        },
+        exerciseDone(){
+            //write what to do here jeff
         }
     },
     mounted: function(){
@@ -136,33 +149,47 @@ export default {
 
 <style>
 body{
-    background: darksalmon;
+    /* background: darksalmon; */
 }
 
-.fill{
+div.fill{
     /* background-image: url('http://source.unsplash.com/random/150x150'); */
     position: relative;
-    height: 150px;
-    width: 150px;
-    top: 5px;
-    left: 5px;
+    height: 35px;
+    width: 125px;
+    text-align: center;
+    top: 0px;
+    left: 0px;
     cursor: pointer;
+    border: 3px dotted lightblue;
+    border-radius: 5px;
 }
 
-.empty{
+div.empty{
     display: inline-block;
-    height: 160px;
-    width: 160px;
-    margin: 10px;
+    height: 41px;
+    width: 131px;
+    margin: 0;
     border: 3px salmon solid;
+    border-radius: 5px;
     background-color: white;
+}
+
+.lacuns_area{
+    display: flex;
+    flex-direction: row;
+}
+
+.lacuns_area .phrase{
+    line-height: 40px;
+    margin: 0 7px;
 }
 
 .hold {
     border: solid #ccc 4px;
 }
 
-.hovered {
+.empty.hovered {
     background: #f4f4f4;
     border-style: dashed;
 }
@@ -175,6 +202,24 @@ body{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+}
+
+.words-container{
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+}
+
+.words_area div img,
+.words_area div:first-child
+/* .lacuns_area div  */
+{
+    position: relative;
+    right: 3px;
+    width: 134px;
+    height: 130px;
+    margin-bottom: 5px;
+    
 }
 
 </style>
