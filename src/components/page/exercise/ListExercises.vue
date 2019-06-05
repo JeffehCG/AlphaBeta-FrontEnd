@@ -4,6 +4,7 @@
             <li v-for="exercise in exercises" :key="exercise.cd_exercicio">
                 <ItemExercise :exercise= "exercise"/>
             </li>
+            <span v-if="exercises == false">Nenhum Exercicio Disponivel</span>
         </ul>
     </div>
 </template>

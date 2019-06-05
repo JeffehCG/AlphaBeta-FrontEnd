@@ -1,5 +1,7 @@
 <template>
     <div>
+        <router-link to = "/listExercise">VOLTAR</router-link>
+        
         <!-- <div>{{ paramsExercise }}</div> -->
         <div v-html="exercise_processed.phrase"></div>
         <br><br>
@@ -23,6 +25,7 @@
 // import 'jquery-ui-dist/jquery-ui.css'
 
 
+import {mapState} from 'vuex'
 import {baseApiUrl,showError} from '@/global'
 import axios from 'axios'
 // import { async } from 'q';
@@ -31,8 +34,10 @@ import axios from 'axios'
 
 export default {
     name: 'Viewexercise',
+    computed: mapState(['user']),
     data: function(){
         return{
+            dataUser: {},
             exercise: {},
             paramsExercise: [],
             exercise_processed: {
@@ -136,8 +141,20 @@ export default {
             }
             
         },
-        exerciseDone(){
-            //write what to do here jeff
+        async exerciseDone(){
+            let url = `${baseApiUrl}/exerciseFinished`
+            this.dataUser.cd_cpf_aluno = this.user.cpf
+            this.dataUser.cd_exercicio = this.exercise.cd_exercicio
+            this.dataUser.qt_erros = 1 //Aqui adicionar quantidade de erros
+
+            if(this.user.teacher == false){
+                await axios.post(url, this.dataUser)
+                    .then(()=>{
+                        alert("Parabens, você concluiu o exercicio")
+                        this.$router.push("/listExercise")
+                    })
+                    .catch(showError)
+            }
         }
     },
     mounted: function(){

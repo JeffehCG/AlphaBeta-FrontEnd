@@ -2,7 +2,7 @@
     <div class="clasroom">
         <div class="form-content">
             <div class="form-buttons">
-                <b-button v-if="!addNewClass" variant = "primary" class="fa fa-pencil" @click="addNewClass = !addNewClass">Nova Turma </b-button>
+                <b-button v-if="!addNewClass && user.teacher" variant = "primary" class="fa fa-pencil" @click="addNewClass = !addNewClass">Nova Turma </b-button>
                 <b-button v-if="addNewClass" variant = "danger" class="fa fa-pencil" @click="addNewClass = !addNewClass">Cancelar </b-button>
             </div>
             <b-form v-if="addNewClass" class="form-inputs">
@@ -27,6 +27,8 @@
             <li v-for="classroom in classes" :key="classroom.cd_turma">
                 <ItemClassroom :classroom= "classroom"/>
             </li>
+
+            <span v-if="classes == false">Nenhuma Classe Disponivel</span>
         </ul>
     </div>
 </template>

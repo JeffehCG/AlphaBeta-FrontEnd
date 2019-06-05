@@ -1,5 +1,6 @@
 <template>
     <div class="classById">
+        <router-link to = "/classroom">VOLTAR</router-link>
         <div class="infoClass">
             <h1 class="titleClass">Turma {{classroom.cd_turma}}</h1>
             <div class="image-class d-none d-sm-block">
@@ -20,14 +21,15 @@
         <h1 class="title">Alunos Matriculados</h1>
         <b-table hover striped :items="studentsClass" :fields='fieldsStudents'>
             <template slot="actions" slot-scope="data">
-                <b-button variant = "danger" @click="removeStudent(data.item)"> <!--Botão para excluir usuario-->
+                <b-button v-if="user.teacher" variant = "danger" @click="removeStudent(data.item)"> <!--Botão para excluir usuario-->
                     <i class="fa fa-trash"> Desmatricular</i>
                 </b-button>
             </template>
         </b-table>
+        <span v-if="studentsClass == false">Nenhum Aluno Matriculado</span>
 
         <div>
-            <b-button variant = "primary" v-b-modal.modal-center @click="loadAllStudents">Matricule Mais Alunos Aqui! </b-button>
+            <b-button v-if="user.teacher" variant = "primary" v-b-modal.modal-center @click="loadAllStudents">Matricule Mais Alunos Aqui! </b-button>
 
             <!-- Modal Component -->
             <b-modal class="modalStudents" id="modal-center" size="lg" centered title="Escolha o aluno a ser Matriculado">
@@ -45,14 +47,15 @@
         <h1 class="title">Exercicios Adicionados</h1>
         <b-table hover striped :items="exercisesClass" :fields='fieldsExercises'>
             <template slot="actions" slot-scope="data">
-                <b-button variant = "danger" @click="removeExercise(data.item)"> <!--Botão para excluir usuario-->
+                <b-button v-if="user.teacher" variant = "danger" @click="removeExercise(data.item)"> <!--Botão para excluir usuario-->
                     <i class="fa fa-trash"> Excluir</i>
                 </b-button>
             </template>
         </b-table>
+        <span v-if="exercisesClass == false">Nenhum Exercicio Adicionado</span>
 
         <div>
-            <b-button variant = "primary" v-b-modal.modal-1 @click="loadAllExercises">Adicione mais exercicios! </b-button>
+            <b-button v-if="user.teacher" variant = "primary" v-b-modal.modal-1 @click="loadAllExercises">Adicione mais exercicios! </b-button>
 
             <!-- Modal Component -->
             <b-modal class="modalExercice" id="modal-1" size="lg" centered title="Escolha o exercicio a ser adicionado">
@@ -70,10 +73,12 @@
 
 <script>
 import {baseApiUrl,showError} from '@/global'
+import {mapState} from 'vuex'
 import axios from 'axios'
 
 export default {
     name: 'ClassroomById',
+    computed: mapState(['user']),
     data: function(){
         return{
             classroom: {},

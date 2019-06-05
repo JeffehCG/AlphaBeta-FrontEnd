@@ -16,7 +16,7 @@
                     Exercicios
                 </div>
             </router-link>
-            <router-link to = "/buildExercise">
+            <router-link v-if="user.teacher" to = "/buildExercise">
                 <div class="button color4">
                     Novo Exercicio
                 </div>
@@ -26,8 +26,11 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
+
 export default {
-    name: 'Menu'
+    name: 'Menu',
+    computed: mapState(['user']),
 }
 </script>
 

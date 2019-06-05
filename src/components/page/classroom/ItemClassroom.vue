@@ -25,8 +25,8 @@
       </b-form>
 
       <div class="buttons" v-if="!updateClass">
-        <b-button variant = "danger" @click.prevent="removeClassroom"><i class="fa fa-trash"></i></b-button>
-        <b-button variant = "warning" @click.prevent="updateClass = !updateClass"><i class="fa fa-pencil"></i></b-button>
+        <b-button v-if="user.teacher" variant = "danger" @click.prevent="removeClassroom"><i class="fa fa-trash"></i></b-button>
+        <b-button v-if="user.teacher" variant = "warning" @click.prevent="updateClass = !updateClass"><i class="fa fa-pencil"></i></b-button>
       </div>
     </router-link>
 </div>
@@ -34,11 +34,13 @@
 
 <script>
 import {baseApiUrl,showError} from '@/global'
+import {mapState} from 'vuex'
 import axios from 'axios'
 
 export default {
   name: "ItemClassroom.vue",
   props: ["classroom"],
+  computed: mapState(['user']),
   data: function(){
     return{
       updateClass: false,

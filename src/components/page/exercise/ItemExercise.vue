@@ -15,15 +15,38 @@
         <h2>Codigo: {{exercise.cd_exercicio}} Titulo: {{exercise.ds_classificacao}}</h2>
         <p>Classificação: {{exercise.nm_url}}</p>
         <span class="info-exercise-texto">Texto do Exercicio: {{exercise.ds_texto}}</span>
+        <span v-if="exerciseFinished && user.teacher == false" class="info-exercice-finished fa fa-check bg-success">Concluido</span>
+        <span v-if="exerciseFinished == false && user.teacher == false" class="info-exercice-finished fa fa-times bg-warning">Pendente</span>
       </div>
     </router-link>
 </div>
 </template>
 
 <script>
+import {mapState} from 'vuex'
+import axios from 'axios'
+import {baseApiUrl, showError} from '@/global'
+
 export default {
     name: 'ItemExercise',
     props: ["exercise"],
+    computed: mapState(['user']),
+    data: function(){
+        return{
+            exerciseFinished: {}
+        }
+    },
+    methods:{
+        loadExercisesFinished(){
+                const url = `${baseApiUrl}/exerciseFinished/${this.user.cpf}/${this.exercise.cd_exercicio}`
+                axios.get(url)
+                    .then(res =>this.exerciseFinished = res.data)
+                    .catch(showError)
+        }
+    },
+    mounted(){
+        this.loadExercisesFinished()
+    }
 }
 </script>
 
