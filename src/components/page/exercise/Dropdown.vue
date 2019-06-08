@@ -175,7 +175,6 @@ export default {
                             this.parameters[i].form = formData
 
                             url = `${baseApiUrl}/paransExercise`
-                            console.log(url)
                                 await axios.post(url ,this.parameters[i].form
                                     , {
                                         headers: {
@@ -189,6 +188,7 @@ export default {
                     this.$toasted.global.defaultSuccess()
                     this.exercise= {}
                     this.parameters = {}
+                    this.$router.push("/listExercise")
                 })
                 .catch(showError)
         },

@@ -94,4 +94,18 @@ export default {
       "leftSide content rightSide"
       "footer footer footer";
   }
+
+  @media only screen and (max-width: 600px) {
+  #app {
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 90px 70px 1fr 40px;
+    grid-template-columns:  1fr ;
+    grid-template-areas: 
+      "header"
+      "menu"
+      "content"
+      "footer";
+  }
+  }
 </style>

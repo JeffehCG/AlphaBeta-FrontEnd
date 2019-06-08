@@ -1,6 +1,6 @@
 <template>
     <footer class="footer">
-        Footer
+        ALPHABETA - Sistema para auxilio no aprendizado de crianças com problemas cognitivos
     </footer>
 </template>
 
