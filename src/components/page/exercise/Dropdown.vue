@@ -18,18 +18,22 @@
                         <div v-if="parameters.palavra1 != null" class="card">
                             <input type="file" id="file1" ref="file1" multiple/>
                             <b-form-input v-model="parameters.palavra1.nm_texto" placeholder="Parametro"></b-form-input>
+                            {{parameters.palavra1.cd_parametro}}
                         </div>
                         <div v-if="parameters.palavra2 != null" class="card" >
                             <input type="file" id="file2" ref="file2" multiple/>
                             <b-form-input v-model="parameters.palavra2.nm_texto" placeholder="Parametro"></b-form-input>
+                            {{parameters.palavra2.cd_parametro}}
                         </div>
                         <div v-if="parameters.palavra3 != null" class="card">
                             <input type="file" id="file3" ref="file3"/>
                             <b-form-input v-model="parameters.palavra3.nm_texto" placeholder="Parametro"></b-form-input>
+                            {{parameters.palavra3.cd_parametro}}
                         </div>
                         <div v-if="parameters.palavra4 != null" class="card">
                             <input type="file" id="file4" ref="file4"/>
                             <b-form-input v-model="parameters.palavra4.nm_texto" placeholder="Parametro"></b-form-input>
+                            {{parameters.palavra4.cd_parametro}}
                         </div>
                         <div v-if="parameters.palavra5 != null" class="card">
                             <input type="file" id="file5" ref="file5"/>
@@ -54,7 +58,8 @@
                     </b-form-group>
                 </b-col>
             </b-row>
-            <b-button @click="insert">Salvar</b-button>
+            <b-button v-if="updateExercise == false" @click="insert">Salvar</b-button>
+            <b-button v-if="updateExercise == true" @click="update">Alterar</b-button>
             <b-button @click="loadExercise">simular</b-button>
         </b-form>
         <hr>
@@ -76,6 +81,8 @@ export default {
     computed: mapState(['user']),
     data: function(){
         return{
+            updateExercise : false,
+            qtParansUpdadeBefore : 0 ,
             exercise: {},
             parameters:{},
             exercise_processed: {
@@ -86,22 +93,124 @@ export default {
         }
     },
     methods:{
-        async insert(){
+        async loadExerciseUpdade(){
+            if(this.$route.params.id){
+                let url = `${baseApiUrl}/exerciseComplete/${this.$route.params.id}`
+                axios.get(url).then(res => {
+                    this.exercise = res.data;                 
+                }).catch(showError)
 
+                url = `${baseApiUrl}/exerciseComplete/params/${this.$route.params.id}`
+                await axios.get(url).then(res => {
+                    if(res.data[0]){this.parameters.palavra1 = res.data[0];}
+                    if(res.data[1]){this.parameters.palavra2 = res.data[1];}
+                    if(res.data[2]){this.parameters.palavra3 = res.data[2];}
+                    if(res.data[3]){this.parameters.palavra4 = res.data[3];}
+                    if(res.data[4]){this.parameters.palavra5 = res.data[4];}
+                    if(res.data[5]){this.parameters.palavra6 = res.data[5];}
+                    if(res.data[6]){this.parameters.palavra7 = res.data[6];}
+                    if(res.data[7]){this.parameters.palavra8 = res.data[7];}
+                    if(res.data[8]){this.parameters.palavra9 = res.data[8];}
+                }).catch(showError)
+
+                for( let i in this.parameters){
+                    this.qtParansUpdadeBefore = this.qtParansUpdadeBefore + 1 
+                }
+            }
+        },
+
+        async update(){
+            let url = `${baseApiUrl}/exerciseComplete/${this.exercise.cd_exercicio}` 
+
+            await axios.put(url, this.exercise)
+                .then(async ()=>{
+                    let x = 0
+                    for(let i in this.parameters) {
+                        x = x + 1 
+                        if(x <= this.qtParansUpdadeBefore){
+                            if(this.parameters[i].ds_img){
+                                url = `${baseApiUrl}/paransExercise/${this.parameters[i].cd_parametro}/${this.exercise.cd_exercicio}`
+
+                                let formData = new FormData()
+                                if(i == "palavra1" && this.$refs.file1.files[0]){formData.append('ds_img', this.$refs.file1.files[0])}
+                                if(i == "palavra2" && this.$refs.file2.files[0]){formData.append('ds_img', this.$refs.file2.files[0])}
+                                if(i == "palavra3" && this.$refs.file3.files[0]){formData.append('ds_img', this.$refs.file3.files[0])}
+                                if(i == "palavra4" && this.$refs.file4.files[0]){formData.append('ds_img', this.$refs.file4.files[0])}
+                                if(i == "palavra5" && this.$refs.file5.files[0]){formData.append('ds_img', this.$refs.file5.files[0])}
+                                if(i == "palavra6" && this.$refs.file6.files[0]){formData.append('ds_img', this.$refs.file6.files[0])}
+                                if(i == "palavra7" && this.$refs.file7.files[0]){formData.append('ds_img', this.$refs.file7.files[0])}
+                                if(i == "palavra8" && this.$refs.file8.files[0]){formData.append('ds_img', this.$refs.file8.files[0])}
+                                if(i == "palavra9" && this.$refs.file9.files[0]){formData.append('ds_img', this.$refs.file9.files[0])}
+
+                                formData.append('cd_parametro', x)
+                                formData.append('nm_texto', this.parameters[i].nm_texto)
+                                this.parameters[i].form = formData
+
+                                await axios.put(url, this.parameters[i].form
+                                    , {
+                                        headers: {
+                                            'Content-Type': 'multipart/form-data'
+                                        }
+                                    })
+                                        .then(()=>{})
+                                        .catch(showError)
+                            }
+                        }
+                        else{
+                            let formData = new FormData()
+
+                            if(i == "palavra1" ){formData.append('ds_img', this.$refs.file1.files[0])}
+                            if(i == "palavra2" ){formData.append('ds_img', this.$refs.file2.files[0])}
+                            if(i == "palavra3" ){formData.append('ds_img', this.$refs.file3.files[0])}
+                            if(i == "palavra4" ){formData.append('ds_img', this.$refs.file4.files[0])}
+                            if(i == "palavra5" ){formData.append('ds_img', this.$refs.file5.files[0])}
+                            if(i == "palavra6" ){formData.append('ds_img', this.$refs.file6.files[0])}
+                            if(i == "palavra7" ){formData.append('ds_img', this.$refs.file7.files[0])}
+                            if(i == "palavra8" ){formData.append('ds_img', this.$refs.file8.files[0])}
+                            if(i == "palavra9" ){formData.append('ds_img', this.$refs.file9.files[0])}
+
+                            formData.append('cd_parametro', x)
+                            formData.append('nm_texto', this.parameters[i].nm_texto)
+                            formData.append('cd_exercicio', this.exercise.cd_exercicio)
+                            this.parameters[i].form = formData
+
+                            url = `${baseApiUrl}/paransExercise`
+                            console.log(url)
+                                await axios.post(url ,this.parameters[i].form
+                                    , {
+                                        headers: {
+                                            'Content-Type': 'multipart/form-data'
+                                        }
+                                    })
+                                    .then(()=>{})
+                                    .catch(showError)
+                        }
+                    }
+                    this.$toasted.global.defaultSuccess()
+                    this.exercise= {}
+                    this.parameters = {}
+                })
+                .catch(showError)
+        },
+
+        async insert(){
+            
+            let qt = 0
             for(let i in this.parameters){
                 let formData = new FormData()
 
-                if(i == "palavra1"){formData.append('ds_img', this.$refs.file1.files[0])}
-                if(i == "palavra2"){formData.append('ds_img', this.$refs.file2.files[0])}
-                if(i == "palavra3"){formData.append('ds_img', this.$refs.file3.files[0])}
-                if(i == "palavra4"){formData.append('ds_img', this.$refs.file4.files[0])}
-                if(i == "palavra5"){formData.append('ds_img', this.$refs.file5.files[0])}
-                if(i == "palavra6"){formData.append('ds_img', this.$refs.file6.files[0])}
-                if(i == "palavra7"){formData.append('ds_img', this.$refs.file7.files[0])}
-                if(i == "palavra8"){formData.append('ds_img', this.$refs.file8.files[0])}
-                if(i == "palavra9"){formData.append('ds_img', this.$refs.file9.files[0])}
+                qt = qt + 1
+                if(i == "palavra1" ){formData.append('ds_img', this.$refs.file1.files[0])}
+                if(i == "palavra2" ){formData.append('ds_img', this.$refs.file2.files[0])}
+                if(i == "palavra3" ){formData.append('ds_img', this.$refs.file3.files[0])}
+                if(i == "palavra4" ){formData.append('ds_img', this.$refs.file4.files[0])}
+                if(i == "palavra5" ){formData.append('ds_img', this.$refs.file5.files[0])}
+                if(i == "palavra6" ){formData.append('ds_img', this.$refs.file6.files[0])}
+                if(i == "palavra7" ){formData.append('ds_img', this.$refs.file7.files[0])}
+                if(i == "palavra8" ){formData.append('ds_img', this.$refs.file8.files[0])}
+                if(i == "palavra9" ){formData.append('ds_img', this.$refs.file9.files[0])}
 
-                formData.append('cd_parametro', this.parameters[i].cd_parametro)
+                formData.append('cd_parametro', qt)
                 formData.append('nm_texto', this.parameters[i].nm_texto)
                 formData.append('cd_professor', this.user.cpf)
                 this.parameters[i].form = formData
@@ -112,7 +221,7 @@ export default {
             let url = `${baseApiUrl}/exerciseComplete`
             this.exercise.nm_url = 'dragDrop.js'
             this.exercise.cd_professor = this.user.cpf
-            
+
             await axios.post(url, this.exercise)
                 .then(async ()=>{
                     for(let x in this.parameters){
@@ -147,15 +256,15 @@ export default {
                 for(let i = 0; i <= this.exercise.ds_texto.length; i++){
                     if( await this.exercise.ds_texto.charAt(i) === "#"){
                         qt = qt + 1
-                        if(qt == 1 && this.parameters.palavra1 == null) {this.parameters.palavra1 = new Object(); this.parameters.palavra1.cd_parametro = qt}
-                        if(qt == 2 && this.parameters.palavra2 == null) {this.parameters.palavra2 = new Object(); this.parameters.palavra2.cd_parametro = qt}
-                        if(qt == 3 && this.parameters.palavra3 == null) {this.parameters.palavra3 = new Object(); this.parameters.palavra3.cd_parametro = qt}
-                        if(qt == 4 && this.parameters.palavra4 == null) {this.parameters.palavra4 = new Object(); this.parameters.palavra4.cd_parametro = qt}
-                        if(qt == 5 && this.parameters.palavra5 == null) {this.parameters.palavra5 = new Object(); this.parameters.palavra5.cd_parametro = qt}
-                        if(qt == 6 && this.parameters.palavra6 == null) {this.parameters.palavra6 = new Object(); this.parameters.palavra6.cd_parametro = qt}
-                        if(qt == 7 && this.parameters.palavra7 == null) {this.parameters.palavra7 = new Object(); this.parameters.palavra7.cd_parametro = qt}
-                        if(qt == 8 && this.parameters.palavra8 == null) {this.parameters.palavra8 = new Object(); this.parameters.palavra8.cd_parametro = qt}
-                        if(qt == 9 && this.parameters.palavra9 == null) {this.parameters.palavra9 = new Object(); this.parameters.palavra9.cd_parametro = qt}
+                        if(qt == 1 && this.parameters.palavra1 == null) {this.parameters.palavra1 = new Object(); this.parameters.palavra1.codigo = qt}
+                        if(qt == 2 && this.parameters.palavra2 == null) {this.parameters.palavra2 = new Object(); this.parameters.palavra2.codigo = qt}
+                        if(qt == 3 && this.parameters.palavra3 == null) {this.parameters.palavra3 = new Object(); this.parameters.palavra3.codigo = qt}
+                        if(qt == 4 && this.parameters.palavra4 == null) {this.parameters.palavra4 = new Object(); this.parameters.palavra4.codigo = qt}
+                        if(qt == 5 && this.parameters.palavra5 == null) {this.parameters.palavra5 = new Object(); this.parameters.palavra5.codigo = qt}
+                        if(qt == 6 && this.parameters.palavra6 == null) {this.parameters.palavra6 = new Object(); this.parameters.palavra6.codigo = qt}
+                        if(qt == 7 && this.parameters.palavra7 == null) {this.parameters.palavra7 = new Object(); this.parameters.palavra7.codigo = qt}
+                        if(qt == 8 && this.parameters.palavra8 == null) {this.parameters.palavra8 = new Object(); this.parameters.palavra8.codigo = qt}
+                        if(qt == 9 && this.parameters.palavra9 == null) {this.parameters.palavra9 = new Object(); this.parameters.palavra9.codigo = qt}
                     }
                 }
             }
@@ -194,7 +303,7 @@ export default {
                     }catch(e){
                         imageUrl = "";
                     }
-                    paramsDOM += `<div class='words-container'><div>${imageUrl}</div><div id='word_${obj.cd_parametro}' class='fill' draggable='true'>${obj.nm_texto}</div></div>`    
+                    paramsDOM += `<div class='words-container'><div>${imageUrl}</div><div id='word_${obj.codigo}' class='fill' draggable='true'>${obj.nm_texto}</div></div>`    
                 });
                 this.exercise_processed.params = paramsDOM;
                 setTimeout(() => { // setTimeout to put this into event queue
@@ -267,6 +376,12 @@ export default {
             }        
         },
     },
+    mounted(){
+        this.loadExerciseUpdade()
+        if(this.$route.params.id){
+            this.updateExercise = true
+        }
+    }
     
 }
 

@@ -18,6 +18,13 @@
         <span v-if="exerciseFinished && user.teacher == false" class="info-exercice-finished fa fa-check bg-success">Concluido</span>
         <span v-if="exerciseFinished == false && user.teacher == false" class="info-exercice-finished fa fa-times bg-warning">Pendente</span>
       </div>
+
+      <div class="buttons">
+        <b-button v-if="user.teacher" variant = "danger" @click.prevent="removeExercise"><i class="fa fa-trash"></i></b-button>
+        <router-link :to="{name: 'updateExercise', params: {id:exercise.cd_exercicio}}"> 
+          <b-button v-if="user.teacher" variant = "warning"><i class="fa fa-pencil"></i></b-button> 
+        </router-link>
+      </div>
     </router-link>
 </div>
 </template>
@@ -37,6 +44,14 @@ export default {
         }
     },
     methods:{
+        removeExercise(){
+              const url = `${baseApiUrl}/exerciseComplete/${this.exercise.cd_exercicio}`
+              axios.delete(url).then(()=>{
+                  this.$toasted.global.defaultSuccess()
+                  window.location.reload()
+              })
+              .catch(showError)
+        },
         loadExercisesFinished(){
                 const url = `${baseApiUrl}/exerciseFinished/${this.user.cpf}/${this.exercise.cd_exercicio}`
                 axios.get(url)

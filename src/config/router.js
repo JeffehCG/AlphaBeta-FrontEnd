@@ -50,6 +50,10 @@ const routes = [{
     name: 'viewExercise',
     path: '/viewExercise/:id',
     component: ViewExercise
+},{
+    name: 'updateExercise',
+    path: '/updateExercise/:id',
+    component: BuildExercise
 }]
 
 const router = new VueRouter({
