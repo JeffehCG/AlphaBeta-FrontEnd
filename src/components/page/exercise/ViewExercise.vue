@@ -1,9 +1,11 @@
 <template>
-    <div>
-        <router-link to = "/listExercise">VOLTAR</router-link>
-        
+    <div class="container">
+        <!-- <router-link to = "/listExercise"><button>Voltar</button></router-link> -->
+        <router-link to = "/listExercise"><b-button size="lg" variant="danger">Voltar</b-button></router-link>
+        <br><br><br>
+
         <!-- <div>{{ paramsExercise }}</div> -->
-        <div v-html="exercise_processed.phrase"></div>
+        <div class="phrase_area" v-html="exercise_processed.phrase"></div>
         <br><br>
         <!-- <div>{{paramsExercise}}</div> -->
         <div class="words_area" v-html="exercise_processed.params"></div>
@@ -57,7 +59,7 @@ export default {
                 let new_phrase = "";
 
                 [].map.call(phrase_split, function(obj, i){
-                    new_phrase += obj;
+                    new_phrase += `<div class='phrase'>${obj}</div>`;
                     new_phrase += i < qt_params ? "<div id='lacum_"+(i+1)+"' class='empty'></div>" : ""; 
                 })
                  this.exercise_processed.phrase = new_phrase;
@@ -173,7 +175,7 @@ div.fill{
     /* background-image: url('http://source.unsplash.com/random/150x150'); */
     position: relative;
     height: 35px;
-    width: 125px;
+    width: 130px;
     text-align: center;
     top: 0px;
     left: 0px;
@@ -215,7 +217,7 @@ div.empty{
     display: none;
 }
 
-.words_area{
+/* .words_area{
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -225,18 +227,41 @@ div.empty{
     width: 150px;
     display: flex;
     flex-direction: column;
-}
+} */
 
-.words_area div img,
-.words_area div:first-child
+/* .words_area div img */
+/* .words_area div:first-child */
 /* .lacuns_area div  */
-{
+/* {
     position: relative;
     right: 3px;
     width: 134px;
     height: 130px;
     margin-bottom: 5px;
+} */
+
+.phrase_area{
+    align-items: center;
+    display: flex;
+    max-width: 100vw;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
     
+}
+
+.phrase_area .phrase{
+    width: auto;
+    white-space: nowrap;
+}
+
+.phrase_area div{
+    /* margin-bottom: 10px; */
+}
+.phrase_area .empty{
+    margin: 5px 5px;
 }
 
 </style>
