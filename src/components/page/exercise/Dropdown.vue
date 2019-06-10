@@ -574,6 +574,19 @@ export default {
       }
     }
   },
+  watch: {
+        $route(to){ 
+            this.updateExercise = false,
+            this.qtParansUpdadeBefore = 0,
+            this.exercise = {},
+            this.parameters = {},
+            this.exercise_processed = {
+              phrase: "",
+              params: ""
+            },
+            this.exerciseCreated = false
+        }
+    },
   mounted() {
     this.loadExerciseUpdade();
     if (this.$route.params.id) {

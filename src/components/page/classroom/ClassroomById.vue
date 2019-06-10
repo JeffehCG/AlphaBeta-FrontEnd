@@ -33,6 +33,29 @@
 
             <!-- Modal Component -->
             <b-modal class="modalStudents" id="modal-center" size="lg" centered title="Escolha o aluno a ser Matriculado">
+                <b-form class="searchStudents">
+                    <b-row>
+                        <b-col>
+                            <div class="search">
+                                <b-row>
+                                    <b-form-group label = "Pesquisar:" label-for="lb-pesquisa">
+                                        <b-form-input id="lb-content" v-model="search.content"></b-form-input>
+                                    </b-form-group>
+                                    <b-form-group label = "Por:" label-for="lb-campo">
+                                        <select placeholder="Selecione o campo" v-model="search.field">
+                                            <option value="nm_nome">Nome</option>
+                                            <option value="nm_sobrenome">Sobrenome</option>
+                                            <option value="cd_cpf">CPF</option>
+                                            <option value="nm_email">Email</option>
+                                        </select>
+                                    </b-form-group>
+                                    <b-button variant = "primary" class="fa fa-search" @click="searchClasses"></b-button>
+                                </b-row>
+                            </div>
+                        </b-col>
+                    </b-row>
+                </b-form>
+        <hr>
                 <b-table hover striped :items="allStudents" :fields='fieldsStudents'>
                     <template slot="actions" slot-scope="data">
                         <b-button variant = "success" @click="enrollingStudent(data.item)">
@@ -40,6 +63,8 @@
                         </b-button>
                     </template>
                 </b-table>
+                <b-pagination size = 'md' v-model="pageStudents"
+                    :total-rows = "countStudents" :per-page="limitStudents" /> <!--Componente de paginação do bootstrap-vue-->
             </b-modal>
         </div>
 
@@ -59,6 +84,27 @@
 
             <!-- Modal Component -->
             <b-modal class="modalExercice" id="modal-1" size="lg" centered title="Escolha o exercicio a ser adicionado">
+                <b-form class="searchExercises">
+                    <b-row>
+                        <b-col>
+                            <div class="search">
+                                <b-row>
+                                    <b-form-group label = "Pesquisar:" label-for="lb-pesquisa">
+                                        <b-form-input id="lb-content" v-model="search.content"></b-form-input>
+                                    </b-form-group>
+                                    <b-form-group label = "Por:" label-for="lb-campo">
+                                        <select placeholder="Selecione o campo" v-model="search.field">
+                                            <option value="cd_exercicio">Codigo</option>
+                                            <option value="ds_classificacao">Titulo</option>
+                                        </select>
+                                    </b-form-group>
+                                    <b-button variant = "primary" class="fa fa-search" @click="searchExercises"></b-button>
+                                </b-row>
+                            </div>
+                        </b-col>
+                    </b-row>
+                </b-form>
+        <hr>
                 <b-table hover striped :items="allExercises" :fields='fieldsExercises'>
                     <template slot="actions" slot-scope="data">
                         <b-button variant = "success" @click="AddExercice(data.item)">
@@ -66,6 +112,8 @@
                         </b-button>
                     </template>
                 </b-table>
+                <b-pagination size = 'md' v-model="pageClasses"
+                    :total-rows = "countClasses" :per-page="limitClasses" />
             </b-modal>
         </div>
     </div>
@@ -98,7 +146,14 @@ export default {
                 {key: 'ds_classificacao', label: 'Titulo', sortable: true},
                 {key: 'nm_url', label: 'Classificação', sortable: true},
                 {key: 'actions', label: 'Adicionar'},
-            ]
+            ],
+            search : {},
+            pageStudents: 1, //Atributo para paginação
+            limitStudents: 0, //Atributo para paginação
+            countStudents: 0, //Atributo para paginação
+            pageClasses: 1, //Atributo para paginação
+            limitClasses: 0, //Atributo para paginação
+            countClasses: 0, //Atributo para paginação
         }
     },
     methods:{
@@ -122,8 +177,12 @@ export default {
             .catch(showError)
         },
         loadAllStudents(){
-            const url = `${baseApiUrl}/students`
-            axios.get(url).then(res => this.allStudents = res.data).catch(showError)
+            const url = `${baseApiUrl}/students?page=${this.pageStudents}`
+            axios.get(url).then(res =>{
+                this.allStudents = res.data.data
+                this.countStudents = res.data.count
+                this.limitStudents = res.data.limit
+            }).catch(showError)
         },
         enrollingStudent(student){
             const url = `${baseApiUrl}/enrollment`
@@ -145,8 +204,12 @@ export default {
             .catch(showError)
         },
         loadAllExercises(){
-            const url = `${baseApiUrl}/teacher/exerciseComplete/${this.classroom.cd_cpf_professor}`
-            axios.get(url).then(res => this.allExercises = res.data).catch(showError)
+            const url = `${baseApiUrl}/teacher/exerciseComplete/${this.classroom.cd_cpf_professor}?page=${this.pageClasses}&classes=true`
+            axios.get(url).then(res =>{
+                this.allExercises = res.data.data
+                this.countClasses = res.data.count
+                this.limitClasses = res.data.limit
+            }).catch(showError)
         },
         AddExercice(exercice){
             const url = `${baseApiUrl}/exerciseToClass`
@@ -167,8 +230,32 @@ export default {
                 this.loadExercises()
             })
             .catch(showError)
+        },
+        async searchClasses(){
+                const url = `${baseApiUrl}/searchStudents`
+                await axios.post(url,this.search)
+                    .then(res =>{
+                        this.allStudents = res.data
+                    })
+                    .catch(showError)
+        },
+        async searchExercises(){
+                const url = `${baseApiUrl}/searcheExerciceTeacher/${this.classroom.cd_cpf_professor}`
+                await axios.post(url,this.search)
+                    .then(res =>{
+                        this.allExercises = res.data
+                    })
+                    .catch(showError)
         }
 
+    },
+    watch:{
+        pageStudents(){
+            this.loadAllStudents() //Quando a pagina muda, chamar o metodo para buscar paginas
+        },
+        pageClasses(){
+            this.loadAllExercises()
+        }
     },
     mounted(){
         this.loadClass()
