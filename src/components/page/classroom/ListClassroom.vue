@@ -53,7 +53,7 @@
                         <option value="cd_turma">Codigo</option>
                         <option value="aa_inicio">Ano Inicio</option>
                         <option value="nivel_turma">Nivel turma</option>
-                        <option value>Todos</option>
+                        <option value="todos">Todos</option>
                       </select>
                       <b-button variant="primary" class="fa fa-search" @click="searchClasses"></b-button>
                     </b-input-group-append>
@@ -153,24 +153,34 @@ export default {
         .catch(showError);
     },
     async searchClasses() {
-      if (this.user.teacher) {
-        const url = `${baseApiUrl}/searcheClassesTeacher/${this.user.cpf}`;
-        await axios
-          .post(url, this.search)
-          .then(res => {
-            this.classes = res.data;
-            this.loadMore = false;
-          })
-          .catch(showError);
-      } else {
-        const url = `${baseApiUrl}/searcheClassesStudent/${this.user.cpf}`;
-        await axios
-          .post(url, this.search)
-          .then(res => {
-            this.classes = res.data;
-            this.loadMore = false;
-          })
-          .catch(showError);
+      if(this.search.field === "todos" || this.search.field == null){
+        this.addNewClass = false;
+          this.classroom = {};
+          this.page = 1;
+          this.loadMore = true;
+          this.classes = [];
+          this.loadClasses();
+      }
+      else{
+        if (this.user.teacher) {
+          const url = `${baseApiUrl}/searcheClassesTeacher/${this.user.cpf}`;
+          await axios
+            .post(url, this.search)
+            .then(res => {
+              this.classes = res.data;
+              this.loadMore = false;
+            })
+            .catch(showError);
+        } else {
+          const url = `${baseApiUrl}/searcheClassesStudent/${this.user.cpf}`;
+          await axios
+            .post(url, this.search)
+            .then(res => {
+              this.classes = res.data;
+              this.loadMore = false;
+            })
+            .catch(showError);
+        }
       }
     }
   },

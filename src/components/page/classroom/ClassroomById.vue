@@ -88,7 +88,7 @@
                             <option value="nm_sobrenome">Sobrenome</option>
                             <option value="cd_cpf">CPF</option>
                             <option value="nm_email">Email</option>
-                            <option value>Todos</option>
+                            <option value = "todos">Todos</option>
                           </select>
 
                           <b-button variant="primary" class="fa fa-search" @click="searchClasses"></b-button>
@@ -178,7 +178,7 @@
                         >
                           <option value="cd_exercicio">Codigo</option>
                           <option value="ds_classificacao">Titulo</option>
-                          <option value>Todos</option>
+                          <option value = "todos">Todos</option>
                         </select>
 
                         <b-button variant="primary" class="fa fa-search" @click="searchExercises"></b-button>
@@ -352,24 +352,40 @@ export default {
         .catch(showError);
     },
     async searchClasses() {
-      const url = `${baseApiUrl}/searchStudents`;
-      await axios
-        .post(url, this.search)
-        .then(res => {
-          this.allStudents = res.data;
-        })
-        .catch(showError);
+      if(this.search.field === "todos" || this.search.field == null){
+        this.pageStudents = 1
+        this.limitStudents = 0 
+        this.countStudents = 0 
+        this.loadAllStudents()
+      }
+      else{
+        const url = `${baseApiUrl}/searchStudents`;
+        await axios
+          .post(url, this.search)
+          .then(res => {
+            this.allStudents = res.data;
+          })
+          .catch(showError);
+      }
     },
     async searchExercises() {
-      const url = `${baseApiUrl}/searcheExerciceTeacher/${
-        this.classroom.cd_cpf_professor
-      }`;
-      await axios
-        .post(url, this.search)
-        .then(res => {
-          this.allExercises = res.data;
-        })
-        .catch(showError);
+      if(this.search.field === "todos" || this.search.field == null){
+        this.pageClasses = 1
+        this.limitClasses = 0
+        this.countClasses = 0
+        this.loadAllExercises()
+      }
+      else{
+        const url = `${baseApiUrl}/searcheExerciceTeacher/${
+          this.classroom.cd_cpf_professor
+        }`;
+        await axios
+          .post(url, this.search)
+          .then(res => {
+            this.allExercises = res.data;
+          })
+          .catch(showError);
+      }
     }
   },
   watch: {
