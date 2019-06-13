@@ -1,5 +1,15 @@
 <template>
   <div class="home">
+    <div class="stats"> <!--Colocando os status do sistema (qt categorias, artigos e usuarios)-->
+            <Stat title = "Turmas" :value="stat.qtClassrom"
+                icon="fa fa-folder" color="#d54d50"></Stat>
+            <Stat title = "Exercicios" :value="stat.qtExercise"
+                icon="fa fa-file" color="#3282cd"></Stat>
+            <Stat v-if="this.user.teacher" title = "Alunos" :value="stat.qtStudents"
+                icon="fa fa-user" color="#3bc480"></Stat>
+            <Stat v-else title = "Exercicios Concluidos" :value="stat.qtExercisesFineshed"
+                icon="fa fa-check" color="#3bc480"></Stat>
+        </div>
     <div class="resumo-alphabeta">
       <h2>Alphabeta</h2>
       <div class="resumo-content">
@@ -25,15 +35,42 @@
           alt="img-perfil-jefferson"
         ></b-img>
         <h4 class="about-name">Jefferson Costa</h4>
-        <p class="about-role">Back-End / Analista</p>
+        <p class="about-role">Back-End / Analista / DBA</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Stat from './Stat'
+import axios from 'axios'
+import {baseApiUrl} from '@/global'
+import { mapState } from "vuex"
+
 export default {
-  name: "Home"
+  name: "Home",
+  components: {Stat},
+  computed: mapState(["user"]),
+  data: function(){
+        return{
+            stat: {}
+        }
+    },
+  methods: {
+        getStats(){ 
+          if(this.user.teacher){
+            axios.get(`${baseApiUrl}/statsTeacher/${this.user.cpf}`)
+                .then(res => this.stat = res.data)
+          }
+          else{
+            axios.get(`${baseApiUrl}/statsStudent/${this.user.cpf}`)
+                .then(res => this.stat = res.data)
+          } 
+        }
+    },
+    mounted(){
+        this.getStats()
+    }
 };
 </script>
 
@@ -60,4 +97,10 @@ export default {
   height: 200px;
   width: 200px;
 }
+
+.stats{
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+    }
 </style>
