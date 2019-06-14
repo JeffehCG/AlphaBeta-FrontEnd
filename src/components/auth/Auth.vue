@@ -72,6 +72,8 @@ export default {
     },
     methods:{
         signupTeacher(){
+            delete this.user.login
+            delete this.user.password
             axios.post(`${baseApiUrl}/teachers`, this.user)
                 .then(()=>{
                     this.$toasted.global.defaultSuccess()
@@ -81,6 +83,8 @@ export default {
                 .catch(showError)
         },
         signupStudent(){
+            delete this.user.login
+            delete this.user.password
             axios.post(`${baseApiUrl}/students`, this.user)
                 .then(()=>{
                     this.$toasted.global.defaultSuccess()
