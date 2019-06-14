@@ -16,63 +16,73 @@
           <div class="files">
             <div v-if="parameters.palavra1 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <!-- <img :src=`data:image/jpeg;base64,${}`/> -->
+                <img v-if="parameters.palavra1.ds_img" :src="parameters.palavra1.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file1" ref="file1" multiple>
               </div>
               <b-form-input v-model="parameters.palavra1.nm_texto" placeholder="Parametro"></b-form-input>
             </div>
-            <div v-if="parameters.palavra1 != null" class="card">
+            <div v-if="parameters.palavra2 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <img v-if="parameters.palavra2.ds_img" :src="parameters.palavra2.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file2" ref="file2" multiple>
               </div>
               <b-form-input v-model="parameters.palavra2.nm_texto" placeholder="Parametro"></b-form-input>
             </div>
             <div v-if="parameters.palavra3 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <img v-if="parameters.palavra3.ds_img" :src="parameters.palavra3.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file3" ref="file3" multiple>
               </div>
               <b-form-input v-model="parameters.palavra3.nm_texto" placeholder="Parametro"></b-form-input>
             </div>
             <div v-if="parameters.palavra4 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <img v-if="parameters.palavra4.ds_img" :src="parameters.palavra4.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file4" ref="file4" multiple>
               </div>
               <b-form-input v-model="parameters.palavra4.nm_texto" placeholder="Parametro"></b-form-input>
             </div>
             <div v-if="parameters.palavra5 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <img v-if="parameters.palavra5.ds_img" :src="parameters.palavra5.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file5" ref="file5" multiple>
               </div>
               <b-form-input v-model="parameters.palavra5.nm_texto" placeholder="Parametro"></b-form-input>
             </div>
             <div v-if="parameters.palavra6 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <img v-if="parameters.palavra6.ds_img" :src="parameters.palavra6.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file6" ref="file6" multiple>
               </div>
               <b-form-input v-model="parameters.palavra6.nm_texto" placeholder="Parametro"></b-form-input>
             </div>
             <div v-if="parameters.palavra7 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <img v-if="parameters.palavra7.ds_img" :src="parameters.palavra7.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file7" ref="file7" multiple>
               </div>
               <b-form-input v-model="parameters.palavra7.nm_texto" placeholder="Parametro"></b-form-input>
             </div>
             <div v-if="parameters.palavra8 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <img v-if="parameters.palavra8.ds_img" :src="parameters.palavra8.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file8" ref="file8" multiple>
               </div>
               <b-form-input v-model="parameters.palavra8.nm_texto" placeholder="Parametro"></b-form-input>
             </div>
             <div v-if="parameters.palavra9 != null" class="card">
               <div class="ipFile_custom" @click="file_mechanic($event)">
-                <img src="../../../../src/assets/img_icon.png">
+                <img v-if="parameters.palavra9.ds_img" :src="parameters.palavra9.ds_img">
+                <img v-else src="../../../../src/assets/img_icon.png">
                 <input type="file" id="file9" ref="file9" multiple>
               </div>
               <b-form-input v-model="parameters.palavra9.nm_texto" placeholder="Parametro"></b-form-input>
@@ -137,30 +147,39 @@ export default {
           .then(res => {
             if (res.data[0]) {
               this.parameters.palavra1 = res.data[0];
+              this.parameters.palavra1.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra1.ds_img
             }
             if (res.data[1]) {
               this.parameters.palavra2 = res.data[1];
+              this.parameters.palavra2.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra2.ds_img
             }
             if (res.data[2]) {
               this.parameters.palavra3 = res.data[2];
+              this.parameters.palavra3.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra3.ds_img
             }
             if (res.data[3]) {
               this.parameters.palavra4 = res.data[3];
+              this.parameters.palavra4.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra4.ds_img
             }
             if (res.data[4]) {
               this.parameters.palavra5 = res.data[4];
+              this.parameters.palavra5.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra5.ds_img
             }
             if (res.data[5]) {
               this.parameters.palavra6 = res.data[5];
+              this.parameters.palavra6.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra6.ds_img
             }
             if (res.data[6]) {
               this.parameters.palavra7 = res.data[6];
+              this.parameters.palavra7.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra7.ds_img
             }
             if (res.data[7]) {
               this.parameters.palavra8 = res.data[7];
+              this.parameters.palavra8.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra8.ds_img
             }
             if (res.data[8]) {
               this.parameters.palavra9 = res.data[8];
+              this.parameters.palavra9.ds_img = "data:image/jpeg;base64, " + this.parameters.palavra9.ds_img
             }
           })
           .catch(showError);

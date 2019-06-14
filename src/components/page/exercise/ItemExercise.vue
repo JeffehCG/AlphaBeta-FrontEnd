@@ -12,7 +12,7 @@
         <img v-else src="@/assets/beta.png" alt="Exercicio" height="150" width="150">
       </div>
       <div class="info-exercise">
-        <h2>Codigo: {{exercise.cd_exercicio}} Titulo: {{exercise.ds_classificacao}}</h2>
+        <h2>{{exercise.cd_exercicio}}: {{exercise.ds_classificacao}}</h2>
         <p>Classificação: {{exercise.nm_url}}</p>
         <span class="info-exercise-texto">Texto do Exercicio: {{exercise.ds_texto}}</span>
         
@@ -36,7 +36,7 @@
         <img v-else src="@/assets/beta.png" alt="Exercicio" height="150" width="150">
       </div>
       <div class="info-exercise">
-        <h2>Codigo: {{exercise.cd_exercicio}} Titulo: {{exercise.ds_classificacao}}</h2>
+        <h2>{{exercise.cd_exercicio}}: {{exercise.ds_classificacao}}</h2>
         <p>Classificação: {{exercise.nm_url}}</p>
         <span class="info-exercise-texto">Texto do Exercicio: {{exercise.ds_texto}}</span>
         
