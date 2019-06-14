@@ -89,7 +89,7 @@ export default {
         const url = `${baseApiUrl}/teacher/exerciseComplete/${
           this.user.cpf
         }?page=${this.page}`;
-        axios
+        await axios
           .get(url)
           .then(res => {
             this.exercises = this.exercises.concat(res.data);
@@ -102,7 +102,7 @@ export default {
         const url = `${baseApiUrl}/student/exerciseComplete/${
           this.user.cpf
         }?page=${this.page}`;
-        axios
+        await axios
           .get(url)
           .then(res => {
             this.exercises = this.exercises.concat(res.data);

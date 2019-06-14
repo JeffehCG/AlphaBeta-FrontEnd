@@ -3,8 +3,8 @@
     <router-link v-if="user.teacher == false" v-bind:class="getBgStatusClass()" class="itemExercise" :to="{name: 'viewExercise', params: {id:exercise.cd_exercicio}}">
       <div class="image-exercise d-none d-sm-block">
         <img
-          v-if="exercise.imageUrl"
-          :src="exercise.imageUrl"
+          v-if="firstImg"
+          :src="firstImg"
           alt="Exercisio"
           height="150"
           width="150"
@@ -27,8 +27,8 @@
     <router-link v-else class="itemExercise" :to="{name: 'viewExercise', params: {id:exercise.cd_exercicio}}">
       <div class="image-exercise d-none d-sm-block">
         <img
-          v-if="exercise.imageUrl"
-          :src="exercise.imageUrl"
+          v-if="firstImg"
+          :src="firstImg"
           alt="Exercisio"
           height="150"
           width="150"
@@ -63,7 +63,8 @@ export default {
     computed: mapState(['user']),
     data: function(){
         return{
-            exerciseFinished: {}
+            exerciseFinished: {},
+            firstImg: null
         }
     },
     methods:{
@@ -88,10 +89,17 @@ export default {
           else{
             return 'bg-warning';
           }
+        },
+        async loadParansExercise(){
+            const url = `${baseApiUrl}/exerciseComplete/paramsFirstImg/${this.exercise.cd_exercicio}`
+            axios.get(url).then(res => {
+                this.firstImg = "data:image/jpeg;base64, " + res.data
+            }).catch(showError)
         }
     },
     mounted(){
         this.loadExercisesFinished()
+        this.loadParansExercise()
     }
 }
 </script>
@@ -160,5 +168,9 @@ export default {
     justify-content: flex-end;
     flex-direction: column;
     /* height: 100%;; */
+}
+
+.itemExercise button{
+  margin-top: 10px;
 }
 </style>
