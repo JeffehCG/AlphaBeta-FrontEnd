@@ -40,11 +40,11 @@
                     <b-form-group>
                         <b-form-input id = "user-confSenha" type = "password" v-model="user.cd_confSenha" placeholder="Confirme a Senha"></b-form-input>
                     </b-form-group>  
-                    <b-form-group>
-                        <select placeholder="Selecione o Tipo de Usuario" v-model="showSignup">
+                    <b-form-group label="Tipo de cadastro">
+                        <b-form-select placeholder="Selecione o Tipo de cadastro" v-model="showSignup">
                             <option>Aluno</option>
                             <option>Professor</option>
-                        </select>
+                        </b-form-select>
                     </b-form-group> 
 
                     <b-button variant = "primary" v-if="showSignup === 'Professor'" @click="signupTeacher">Cadastrar Professor</b-button>

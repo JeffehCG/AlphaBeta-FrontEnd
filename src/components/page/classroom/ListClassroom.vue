@@ -1,22 +1,28 @@
 <template>
   <div class="clasroom">
     <div class="form-content">
-      <div class="form-buttons">
+      <div class="form-button">
         <b-button
           v-if="!addNewClass && user.teacher"
           variant="primary"
           class="fa fa-pencil"
           @click="addNewClass = !addNewClass"
         >Nova Turma</b-button>
-        <b-button
-          v-if="addNewClass"
-          variant="danger"
-          class="fa fa-pencil"
-          @click="addNewClass = !addNewClass"
-        >Cancelar</b-button>
       </div>
-      <b-form v-if="addNewClass" class="form-inputs">
-        <b-row>
+
+      <b-container fluid>
+
+      <b-form v-if="addNewClass" class="new-turma-container">
+        <h2>Nova Turma</h2>
+          <div class="form-inputs">
+            <b-form-group label="Nivel da Turma:" label-for="lb-nivel">
+              <b-form-input id="lb-nivel" v-model="classroom.nivel_turma"></b-form-input>
+            </b-form-group>
+            <b-form-group label="Ano de Inicio:" label-for="lb-inico">
+              <b-form-input id="lb-inicio" v-model="classroom.aa_inicio"></b-form-input>
+            </b-form-group>
+          </div>
+        <!-- <b-row>
           <b-col md="6" sm="12">
             <b-form-group label="Nivel da Turma:" label-for="lb-nivel">
               <b-form-input id="lb-nivel" v-model="classroom.nivel_turma"></b-form-input>
@@ -27,11 +33,16 @@
               <b-form-input id="lb-inicio" v-model="classroom.aa_inicio"></b-form-input>
             </b-form-group>
           </b-col>
-        </b-row>
-      </b-form>
-      <div v-if="addNewClass" class="form-buttons">
+        </b-row>-->
+        <br>
+        <div v-if="addNewClass" class="form-buttons">
         <b-button variant="success" class="fa fa-check" @click="insertClassroom">Cadastrar</b-button>
+        <b-button variant="danger" class="fa fa-pencil" @click="addNewClass = !addNewClass">Cancelar</b-button>
       </div>
+      </b-form>
+      
+        </b-container>
+
     </div>
 
     <b-form class="searchClasse">
@@ -153,15 +164,14 @@ export default {
         .catch(showError);
     },
     async searchClasses() {
-      if(this.search.field === "todos" || this.search.field == null){
+      if (this.search.field === "todos" || this.search.field == null) {
         this.addNewClass = false;
-          this.classroom = {};
-          this.page = 1;
-          this.loadMore = true;
-          this.classes = [];
-          this.loadClasses();
-      }
-      else{
+        this.classroom = {};
+        this.page = 1;
+        this.loadMore = true;
+        this.classes = [];
+        this.loadClasses();
+      } else {
         if (this.user.teacher) {
           const url = `${baseApiUrl}/searcheClassesTeacher/${this.user.cpf}`;
           await axios
@@ -205,7 +215,7 @@ export default {
 
 .clasroom .form-content .form-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-around;
   margin-bottom: 20px;
   font-size: 1.2rem;
   font-weight: 100;
@@ -213,16 +223,14 @@ export default {
 
 .clasroom .form-content .form-inputs {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap;
+  
+}
 
-  background-color: #ddd;
-  padding: 40px;
-  padding-right: 40px;
-  border-radius: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
-  margin-bottom: 20px;
+.form-inputs div input{
+  margin: 0;
 }
 
 .clasroom .load-more {
@@ -230,5 +238,26 @@ export default {
   flex-direction: column;
   align-items: center;
   margin-top: 25px;
+}
+
+.form-button{
+  display: flex;
+  justify-content: flex-end;
+  /* align-items: center; */
+}
+
+.new-turma-container{
+  background-color: #e9e9e9;
+  padding: 40px 40px 0px 40px;
+  /* padding-right: 40px; */
+  border-radius: 1%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+}
+
+.new-turma-container h2{
+  margin-bottom: 30px;
+  text-align: center;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
 <div class="item">
-    <router-link class="itemExercise" :to="{name: 'viewExercise', params: {id:exercise.cd_exercicio}}">
+    <router-link v-if="user.teacher == false" v-bind:class="getBgStatusClass()" class="itemExercise" :to="{name: 'viewExercise', params: {id:exercise.cd_exercicio}}">
       <div class="image-exercise d-none d-sm-block">
         <img
           v-if="exercise.imageUrl"
@@ -15,8 +15,12 @@
         <h2>Codigo: {{exercise.cd_exercicio}} Titulo: {{exercise.ds_classificacao}}</h2>
         <p>Classificação: {{exercise.nm_url}}</p>
         <span class="info-exercise-texto">Texto do Exercicio: {{exercise.ds_texto}}</span>
-        <span v-if="exerciseFinished && user.teacher == false" class="info-exercice-finished fa fa-check bg-success">Concluido</span>
-        <span v-if="exerciseFinished == false && user.teacher == false" class="info-exercice-finished fa fa-times bg-warning">Pendente</span>
+        
+      </div>
+
+      <div class="icon-status">
+        <span v-if="exerciseFinished && user.teacher == false" class="fa fa-check bg-success-override"></span>
+        <span v-if="exerciseFinished == false && user.teacher == false" class="fa fa-times bg-warning-override"></span>
       </div>
 
       <div class="buttons">
@@ -57,6 +61,14 @@ export default {
                 axios.get(url)
                     .then(res =>this.exerciseFinished = res.data)
                     .catch(showError)
+        },
+        getBgStatusClass(){
+          if(this.exerciseFinished){
+            return 'bg-success';
+          }
+          else{
+            return 'bg-warning';
+          }
         }
     },
     mounted(){
@@ -66,7 +78,7 @@ export default {
 </script>
 
 <style>
-    .itemExercise {
+  .itemExercise {
   border-radius: 8px;
   margin-bottom: 20px;
   background-color: #fff;
@@ -74,7 +86,6 @@ export default {
   border: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -116,5 +127,19 @@ export default {
   flex: 1;
   color: #555;
   font-size: 1.1rem;
+}
+
+.bg-success-override,
+.bg-warning-override{
+    font-size: xx-large;
+    color: #ffffff;
+    
+}
+
+.icon-status{
+  display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    /* height: 100%;; */
 }
 </style>
