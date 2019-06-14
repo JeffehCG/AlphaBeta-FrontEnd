@@ -19,6 +19,7 @@
         color="#3bc480"
       ></Stat>
     </div>
+    <hr>
     <div class="resumo-alphabeta">
       <h2>Sobre o Alphabeta...</h2>
       <div class="resumo-content">
@@ -31,6 +32,7 @@
         </p>
       </div>
     </div>
+    <hr>
     <h2>Equipe</h2>
     <div class="about-us">
       <div class="about-container">
@@ -132,4 +134,14 @@ export default {
 .home h2{
   text-align: center;
 }
+
+.home hr {
+        border: 0;
+        width: 100%;
+        height: 1px;
+        background-image: linear-gradient(to right,
+            rgba(120,120,120,0),
+            rgba(120,120,120,0.75),
+            rgba(120,120,120,0));
+    }
 </style>

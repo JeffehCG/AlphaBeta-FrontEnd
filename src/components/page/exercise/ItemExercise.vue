@@ -84,10 +84,10 @@ export default {
         },
         getBgStatusClass(){
           if(this.exerciseFinished){
-            return 'bg-success';
+            return 'success';
           }
           else{
-            return 'bg-warning';
+            return 'warning';
           }
         },
         async loadParansExercise(){
@@ -172,5 +172,21 @@ export default {
 
 .itemExercise button{
   margin-top: 10px;
+}
+
+.item .success{
+  background-color: #90ee90;
+}
+
+.item .success:hover{
+  background-color: #71e65d;
+}
+
+.item .warning{
+  background-color: #fff96a;
+}
+
+.item .warning:hover{
+  background-color: #fffc30;
 }
 </style>
