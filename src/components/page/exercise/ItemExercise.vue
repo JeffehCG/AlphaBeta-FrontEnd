@@ -22,11 +22,30 @@
         <span v-if="exerciseFinished && user.teacher == false" class="fa fa-check bg-success-override"></span>
         <span v-if="exerciseFinished == false && user.teacher == false" class="fa fa-times bg-warning-override"></span>
       </div>
+    </router-link>
+
+    <router-link v-else class="itemExercise" :to="{name: 'viewExercise', params: {id:exercise.cd_exercicio}}">
+      <div class="image-exercise d-none d-sm-block">
+        <img
+          v-if="exercise.imageUrl"
+          :src="exercise.imageUrl"
+          alt="Exercisio"
+          height="150"
+          width="150"
+        >
+        <img v-else src="@/assets/beta.png" alt="Exercicio" height="150" width="150">
+      </div>
+      <div class="info-exercise">
+        <h2>Codigo: {{exercise.cd_exercicio}} Titulo: {{exercise.ds_classificacao}}</h2>
+        <p>Classificação: {{exercise.nm_url}}</p>
+        <span class="info-exercise-texto">Texto do Exercicio: {{exercise.ds_texto}}</span>
+        
+      </div>
 
       <div class="buttons">
-        <b-button v-if="user.teacher" variant = "danger" @click.prevent="removeExercise"><i class="fa fa-trash"></i></b-button>
+        <b-button variant = "danger" @click.prevent="removeExercise"><i class="fa fa-trash"></i></b-button>
         <router-link :to="{name: 'updateExercise', params: {id:exercise.cd_exercicio}}"> 
-          <b-button v-if="user.teacher" variant = "warning"><i class="fa fa-pencil"></i></b-button> 
+          <b-button variant = "warning"><i class="fa fa-pencil"></i></b-button> 
         </router-link>
       </div>
     </router-link>
