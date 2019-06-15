@@ -356,6 +356,7 @@ export default {
         this.pageStudents = 1
         this.limitStudents = 0 
         this.countStudents = 0 
+        this.search = {}
         this.loadAllStudents()
       }
       else{
@@ -364,6 +365,7 @@ export default {
           .post(url, this.search)
           .then(res => {
             this.allStudents = res.data;
+            this.search = {}
           })
           .catch(showError);
       }
@@ -373,6 +375,7 @@ export default {
         this.pageClasses = 1
         this.limitClasses = 0
         this.countClasses = 0
+        this.search = {}
         this.loadAllExercises()
       }
       else{
@@ -383,6 +386,7 @@ export default {
           .post(url, this.search)
           .then(res => {
             this.allExercises = res.data;
+            this.search = {}
           })
           .catch(showError);
       }
