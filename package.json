@@ -13,7 +13,7 @@
     "core-js": "^2.6.5",
     "font-awesome": "4.7.0",
     "jquery": "^3.4.0",
-    "jquery-ui": "^1.12.1",
+    "jquery-ui": "^1.13.2",
     "jquery-ui-dist": "^1.12.1",
     "vue": "^2.6.10",
     "vue-gravatar": "1.2.1",
